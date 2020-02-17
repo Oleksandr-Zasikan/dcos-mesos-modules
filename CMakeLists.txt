@@ -17,4 +17,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/../mesos/3rdparty/cmake)
 
 include(Versions)
 
+get_filename_component(MESOS_ROOT ../mesos ABSOLUTE)
+
 add_subdirectory(journald)

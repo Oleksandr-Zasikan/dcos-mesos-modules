@@ -33,23 +33,23 @@
 #include "journald.hpp"
 #include "lib_journald.hpp"
 
-#ifdef __WINDOWS__
-BOOL APIENTRY DllMain(HMODULE hModule,
-	DWORD  ul_reason_for_call,
-	LPVOID lpReserved
-)
-{
-	switch (ul_reason_for_call)
-	{
-	case DLL_PROCESS_ATTACH:
-	case DLL_THREAD_ATTACH:
-	case DLL_THREAD_DETACH:
-	case DLL_PROCESS_DETACH:
-		break;
-	}
-	return TRUE;
-}
-#endif
+//#ifdef __WINDOWS__
+//BOOL APIENTRY DllMain(HMODULE hModule,
+//	DWORD  ul_reason_for_call,
+//	LPVOID lpReserved
+//)
+//{
+//	switch (ul_reason_for_call)
+//	{
+//	case DLL_PROCESS_ATTACH:
+//	case DLL_THREAD_ATTACH:
+//	case DLL_THREAD_DETACH:
+//	case DLL_PROCESS_DETACH:
+//		break;
+//	}
+//	return TRUE;
+//}
+//#endif
 
 
 using namespace mesos;
@@ -480,7 +480,7 @@ Future<ContainerIO> JournaldContainerLogger::prepare(
 } // namespace mesos {
 
 
-mesos::modules::Module<ContainerLogger>
+extern "C" mesos::modules::Module<ContainerLogger>
 com_mesosphere_mesos_JournaldLogger(
     MESOS_MODULE_API_VERSION,
     MESOS_VERSION,
@@ -495,7 +495,7 @@ com_mesosphere_mesos_JournaldLogger(
         values[parameter.key()] = parameter.value();
       }
 
-      // Load and validate flags from the map.
+      // Load and validate flags from the map.B
       mesos::journald::Flags flags;
       Try<flags::Warnings> load = flags.load(values);
 
