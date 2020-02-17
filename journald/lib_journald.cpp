@@ -28,8 +28,28 @@
 #include <stout/os/fcntl.hpp>
 #include <stout/os/killtree.hpp>
 
+
+
 #include "journald.hpp"
 #include "lib_journald.hpp"
+
+#ifdef __WINDOWS__
+BOOL APIENTRY DllMain(HMODULE hModule,
+	DWORD  ul_reason_for_call,
+	LPVOID lpReserved
+)
+{
+	switch (ul_reason_for_call)
+	{
+	case DLL_PROCESS_ATTACH:
+	case DLL_THREAD_ATTACH:
+	case DLL_THREAD_DETACH:
+	case DLL_PROCESS_DETACH:
+		break;
+	}
+	return TRUE;
+}
+#endif
 
 
 using namespace mesos;
@@ -268,7 +288,7 @@ public:
     }
 
     label.set_key("CONTAINER_ID");
-    label.set_value(stringify(containerId));
+    label.set_value(containerId.value());
     labels.add_labels()->CopyFrom(label);
 
     // If the container is part of an executor (both nested or top
