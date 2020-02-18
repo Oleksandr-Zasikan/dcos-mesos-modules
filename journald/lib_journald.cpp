@@ -480,7 +480,8 @@ Future<ContainerIO> JournaldContainerLogger::prepare(
 } // namespace mesos {
 
 
-extern "C" mesos::modules::Module<ContainerLogger>
+
+extern "C" __declspec(dllexport) mesos::modules::Module<ContainerLogger>
 com_mesosphere_mesos_JournaldLogger(
     MESOS_MODULE_API_VERSION,
     MESOS_VERSION,
