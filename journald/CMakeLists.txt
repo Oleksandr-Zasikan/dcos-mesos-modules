@@ -22,26 +22,33 @@ set(JOURNALD_INCL
 
 include_directories(${JOURNALD_INCL})
 
-link_directories(${MESOS_ROOT}/build/3rdparty/zookeeper-3.4.8/src/zookeeper-3.4.8-build/Debug 
-				${MESOS_ROOT}/build/3rdparty/libprocess/src/Debug 
-				${MESOS_ROOT}/build/3rdparty/protobuf-3.5.0/src/protobuf-3.5.0-build/Debug
-				${MESOS_ROOT}/build/3rdparty/glog-0.4.0/src/glog-0.4.0-build/Debug
-				${MESOS_ROOT}/build/3rdparty/http_parser-2.6.2/src/http_parser-2.6.2-build/Debug
-				${MESOS_ROOT}/build/src/Debug
+link_directories(${MESOS_ROOT}/build/3rdparty/zookeeper-3.4.8/src/zookeeper-3.4.8-build
+				${MESOS_ROOT}/build/3rdparty/libprocess/src
+				${MESOS_ROOT}/build/3rdparty/protobuf-3.5.0/src/protobuf-3.5.0-build
+				${MESOS_ROOT}/build/3rdparty/glog-0.4.0/src/glog-0.4.0-build
+				${MESOS_ROOT}/build/3rdparty/http_parser-2.6.2/src/http_parser-2.6.2-build
+				${MESOS_ROOT}/build/src
 				${MESOS_ROOT}/build/3rdparty/zlib-1.2.8/src/zlib-1.2.8-lib/lib
 				${MESOS_ROOT}/build/3rdparty/bzip2-1.0.6/src/bzip2-1.0.6-lib )
 
 if (WIN32)
-	add_definitions(-D__WINDOWS__ -DNOGDI -DNOMINMAX -D_UNICODE -DUNICODE)
+	add_definitions(-D__WINDOWS__ -DNOGDI -DNOMINMAX -D_UNICODE -DUNICODE -DGOOGLE_GLOG_DLL_DECL= -DLIBARCHIVE_STATIC -DHAVE_LIBZ -DENABLE_NVML -D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS -DCURL_STATICLIB -DLIBSASL_EXPORTS=1 -DZOOKEEPER_VERSION="3.4.8" -DUSE_STATIC_LIB)
 endif ()
 
+if(MSVC)
+  set(CMAKE_EXE_LINKER_FLAGS
+      "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB")
+endif()
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 add_library(journaldlogger SHARED  ${JOURNALD_SRC})
 
 target_link_libraries(journaldlogger process
 									zookeeper
 									mesos-protobufs
-									libprotobufd
-									glogd
+						debug		libprotobufd 
+						optimized 	libprotobuf 
+						debug		glogd
+						optimized	glog
 									Ws2_32
 									Userenv
 									http_parser
@@ -60,8 +67,10 @@ else ()
 	target_link_libraries(mesos-journald-logger process
 									zookeeper
 									mesos-protobufs
-									libprotobufd
-									glogd
+						debug		libprotobufd 
+						optimized 	libprotobuf 
+						debug		glogd
+						optimized	glog
 									Ws2_32
 									Userenv
 									http_parser
